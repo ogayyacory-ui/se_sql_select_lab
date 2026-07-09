@@ -21,7 +21,11 @@ df_alias = pd.read_sql_query("SELECT lastName, employeeNumber AS ID FROM employe
 
 # STEP 5
 # Replace None with your code
-df_executive = pd.read_sql_query("SELECT  *, CASE WHEN jobTitle = 'Executive' THEN 'Yes' ELSE 'No' END AS is_executive FROM employees", conn)  
+df_executive = pd.read_sql_query(
+    "SELECT *, CASE WHEN jobTitle = 'President' OR jobTitle = 'VP Sales' OR jobTitle = 'VP Marketing' "
+    "THEN 'Executive' ELSE 'Not Executive' END AS role FROM employees",
+    conn,
+)
 
 # STEP 6
 # Replace None with your code
@@ -29,12 +33,17 @@ df_name_length = pd.read_sql_query("SELECT lastName, LENGTH(lastName) AS name_le
 
 # STEP 7
 # Replace None with your code
-df_short_title = pd.read_sql_query("SELECT * FROM employees WHERE LENGTH(jobTitle) < 10", conn)
+df_short_title = pd.read_sql_query("SELECT SUBSTR(jobTitle, 1, 2) AS short_title FROM employees", conn)
 
 # STEP 8
 # Replace None with your code
-sum_total_price = pd.read_sql_query("SELECT SUM(buyPrice) AS total_price FROM products", conn).iloc[0, 0]
+sum_total_price = pd.read_sql_query(
+    "SELECT SUM(ROUND(priceEach * quantityOrdered)) AS total_price FROM orderDetails",
+    conn,
+)["total_price"]
 
 # STEP 9
 # Replace None with your code
-df_day_month_year = pd.read_sql_query("SELECT strftime('%d', hireDate) AS day, strftime('%m', hireDate) AS month, strftime('%Y', hireDate) AS year FROM employees", conn)
+df_day_month_year = pd.read_sql_query("SELECT orderDate, strftime('%d', orderDate) AS day, strftime('%m', orderDate) AS month, strftime('%Y', orderDate) AS year FROM orders", conn)
+
+conn.close()
